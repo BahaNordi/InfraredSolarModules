@@ -1,0 +1,44 @@
+from torchvision import transforms
+import torch
+from torchvision.datasets import ImageFolder
+import warnings
+warnings.filterwarnings("ignore")
+
+
+class SolarDataLoader(object):
+    def __init__(self, config):
+        self.train_dir = config['data']['train_dir']
+        self.val_dir = config['data']['val_dir']
+        self.batch_size = config['data']['batch_size']
+        self.mean = config['data']['preprocessing']['mean']
+        self.std = config['data']['preprocessing']['std']
+        self.num_workers = config['data']['num_workers']
+        self._train_loader = None
+        self._val_loader = None
+
+    @property
+    def train_loader(self):
+        if not self._train_loader:
+            train_transform = transforms.Compose([
+                                                  transforms.Grayscale(),
+                                                  transforms.RandomHorizontalFlip(p=0.5),
+                                                  transforms.RandomVerticalFlip(p=0.5),
+                                                  transforms.RandomRotation(180),
+                                                  transforms.ToTensor(),
+                                                  transforms.Normalize(self.mean,
+                                                                       self.std)
+                                                  ])
+            train = ImageFolder(self.train_dir, train_transform)
+            self._train_loader = torch.utils.data.DataLoader(train, shuffle=True, batch_size=self.batch_size,
+                                                             num_workers=self.num_workers)
+        return self._train_loader
+
+    @property
+    def val_loader(self):
+        if not self._val_loader:
+            val_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(self.mean, self.std)])
+            val_set = ImageFolder(self.val_dir, val_transform)
+            self._val_loader = torch.utils.data.DataLoader(val_set, shuffle=False, batch_size=self.batch_size,
+                                                           num_workers=self.num_workers)
+        return self._val_loader
+
