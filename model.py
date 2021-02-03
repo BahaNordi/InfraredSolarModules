@@ -2,20 +2,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-# class CNN(nn.Module):
-#     def __init__(self):
-#         super().__init__()
-#         self.conv1 = nn.Conv2d(1, 16, 3, padding=1)
-#         self.bn1 = nn.BatchNorm2d(16)
-#         self.conv2 = nn.Conv2d(16, 32, 3, padding=1)
-#         self.bn2 = nn.BatchNorm2d(32)
-#         self.conv3 = nn.Conv2d(32, 64, 3, padding=1)
-#         self.bn3 = nn.BatchNorm2d(64)
-#         self.pool = nn.MaxPool2d(2, 2)
-#         self.linear1 = nn.Linear(64 * 5 * 3, 512)
-#         self.bn4 = nn.BatchNorm1d(512)
-#         self.linear2 = nn.Linear(512, 12)
-#         self.dropout = nn.Dropout(p=0.3)
 class CNN(nn.Module):
     def __init__(self):
         super().__init__()

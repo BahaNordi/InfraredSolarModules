@@ -34,7 +34,7 @@ class SolarDataLoader(object):
             weights = torch.DoubleTensor(weights)
             sampler = torch.utils.data.sampler.WeightedRandomSampler(weights, len(weights))
             self._train_loader = torch.utils.data.DataLoader(train, sampler=sampler, batch_size=self.batch_size,
-                                                             num_workers=self.num_workers)  #, sampler=sampler, remove shuffle=True
+                                                             num_workers=self.num_workers)
         return self._train_loader
 
     @property
