@@ -1,0 +1,49 @@
+log:
+  name: "Health_photo_voltaic_systems"
+  experiment_name: 'solar_basicCnn_v00'
+  log_dir: '/content/gdrive/MyDrive/Colab_Notebooks/logs/solar/basic_conv'
+  frequency:
+    iteration: 1
+  root:
+
+checkpoint:
+  init: null
+  frequency:
+    epoch: 1
+
+#############
+
+data:
+  train_dir: '/content/gdrive/MyDrive/Colab_Notebooks/jua_solar/solar_data/InfraredSolarModules/train'
+  val_dir: '/content/gdrive/MyDrive/Colab_Notebooks/jua_solar/solar_data/InfraredSolarModules/val'
+  batch_size: 64
+  num_workers: 3
+
+
+
+  preprocessing:
+    mean: 0.47684264
+    std: 0.26336077
+
+train:
+  epoch: 100
+  loss:
+  weight: null
+
+  optim:
+    method: SGD
+    lr: 0.1
+    weight_decay: 0.0001
+    momentum: 0.9
+
+
+scheduler:
+  method: MultiStepLR
+  step_size: [25, 50]
+  gamma: 0.1
+
+##############
+cuda: all
+
+
+
