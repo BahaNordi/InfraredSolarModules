@@ -91,7 +91,7 @@ def train(config):
     # print(train_loader.__len__())
 
     # defining model
-    model = CNN()
+    model = CNN().to(device)
     lr = config['train']['optim']['lr']
     weight_decay = config['train']['optim']['weight_decay']
     momentum = config['train']['optim']['momentum']
