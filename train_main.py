@@ -2,7 +2,7 @@ import fire
 import os
 import sys
 from InfraredSolarModules.data.dataloader import SolarDataLoader
-from config.yaml_reader import open_yaml
+from InfraredSolarModules.config.yaml_reader import open_yaml
 from InfraredSolarModules.model import CNN
 import torch
 import torch.optim as optim
