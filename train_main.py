@@ -56,7 +56,7 @@ def val_pipeline(val_loader, model, device):
     multiclass_correct = list(0. for i in range(12))
     multiclass_total = list(0. for i in range(12))
     with torch.no_grad():
-        all_pred = torch.tensor([])
+        all_pred = torch.tensor([], device=device)
         for itr, batch in enumerate(val_loader):
             image, labels = batch
             image, labels = image.to(device), labels.to(device)
