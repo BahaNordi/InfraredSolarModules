@@ -8,7 +8,6 @@ import torch
 import torch.optim as optim
 import torch.nn.functional as F
 from torch.optim.lr_scheduler import MultiStepLR
-import copy
 
 
 def train_pipeline(optimizer, train_loader, model):
@@ -80,8 +79,7 @@ def multi_acc(output, labels, correct, total, multiclass_correct, multiclass_tot
     return correct, total, multiclass_correct, multiclass_total
 
 
-def train(*config_path):
-    config = open_yaml(config_path[0])
+def train(config):
     data_loader = SolarDataLoader(config)
     train_loader = data_loader.train_loader
     val_loader = data_loader.val_loader
@@ -126,8 +124,5 @@ def train(*config_path):
 
 
 if __name__ == "__main__":
-    fire.Fire(train)
-
-
-
-
+    config = open_yaml(sys.argv[1])
+    fire.Fire(train(config))
