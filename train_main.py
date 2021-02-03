@@ -10,7 +10,7 @@ import torch.nn.functional as F
 from torch.optim.lr_scheduler import MultiStepLR
 
 
-def train_pipeline(optimizer, train_loader, model):
+def train_pipeline(optimizer, train_loader, model, device):
 
     # history of loss values in each epoch
     loss_history = {
@@ -23,6 +23,7 @@ def train_pipeline(optimizer, train_loader, model):
     }
     for itr, batch in enumerate(train_loader):
         image, labels = batch
+        image, labels = image.to(device), labels.to(device)
         optimizer.zero_grad()
         output = model(image)
         loss = F.nll_loss(output, labels)
@@ -36,7 +37,7 @@ def train_pipeline(optimizer, train_loader, model):
     return loss_total
 
 
-def val_pipeline(val_loader, model):
+def val_pipeline(val_loader, model, device):
     # history of loss values in each epoch
     loss_history = {
         "val": []
@@ -53,6 +54,7 @@ def val_pipeline(val_loader, model):
     with torch.no_grad():
         for itr, batch in enumerate(val_loader):
             image, labels = batch
+            image, labels = image.to(device), labels.to(device)
             output = model(image)
             batch_size = image.shape[0]
             loss = F.nll_loss(output, labels)
@@ -80,6 +82,9 @@ def multi_acc(output, labels, correct, total, multiclass_correct, multiclass_tot
 
 
 def train(config):
+    use_cuda = torch.cuda.is_available()
+    device = torch.device("cuda:0" if use_cuda else "cpu")
+    print('Running model on: ', device)
     data_loader = SolarDataLoader(config)
     train_loader = data_loader.train_loader
     val_loader = data_loader.val_loader
@@ -109,10 +114,10 @@ def train(config):
         # train model on training dataset
         model.train()
         scheduler.step()
-        loss_train = train_pipeline(optimizer, train_loader, model)
+        loss_train = train_pipeline(optimizer, train_loader, model, device)
         print('Train Loss = {}'.format(loss_train))
         model.eval()
-        loss_val, accuracy_total = val_pipeline(val_loader, model)
+        loss_val, accuracy_total = val_pipeline(val_loader, model, device)
         print('Val Loss = {}'.format(loss_val))
         print('Accuracy of the network on the test images: %.3f' % (
                 accuracy_total))

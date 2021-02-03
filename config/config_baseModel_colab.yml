@@ -41,9 +41,3 @@ scheduler:
   method: MultiStepLR
   step_size: [25, 50]
   gamma: 0.1
-
-##############
-cuda: all
-
-
-
