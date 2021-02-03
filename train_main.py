@@ -71,7 +71,7 @@ def val_pipeline(val_loader, model, device):
             correct, total, multiclass_correct, multiclass_total = \
                 multi_acc(pred, labels, correct, total, multiclass_correct, multiclass_total, batch_size)
         loss_total = torch.mean(torch.Tensor(loss_history["val"]))
-        cm = generate_cm(val_loader.dataset.targets, all_pred)
+        cm = generate_cm(val_loader.dataset.targets, all_pred.cpu())
         for i, class_id in enumerate(val_loader.dataset.classes):
             print('Accuracy of class %s:, %2d %%' % (class_id, 100 * multiclass_correct[i] / multiclass_total[i]))
         accuracy_total = 100 * correct / total
