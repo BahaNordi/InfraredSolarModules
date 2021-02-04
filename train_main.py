@@ -33,7 +33,7 @@ def train_pipeline(optimizer, train_loader, model, device):
         loss = F.nll_loss(pred, labels)
         loss.backward()
         optimizer.step()
-        if itr % 50 == 0:
+        if itr % 20 == 0:
             print('Train iteration {} had loss {:.6f}'.format(itr, loss))
 
         loss_history["train"].append(loss)
