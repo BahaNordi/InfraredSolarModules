@@ -24,7 +24,7 @@ class SolarDataLoader(object):
                                                   transforms.RandomHorizontalFlip(p=0.5),
                                                   transforms.RandomVerticalFlip(p=0.5),
                                                   transforms.RandomRotation(180),
-                                                  transforms.RandomCrop((40, 24), padding=(2, 2, 1, 1)),
+                                                  transforms.RandomCrop((40, 24), padding=(2, 2, 0, 0)),
                                                   transforms.ToTensor(),
                                                   transforms.Normalize(self.mean,
                                                                        self.std)
