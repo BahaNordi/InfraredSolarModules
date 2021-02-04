@@ -131,13 +131,13 @@ def train(config):
         model.eval()
         loss_val, accuracy_total, cm = val_pipeline(val_loader, model, device)
         plot_confusion_matrix(cm, val_loader.dataset.classes, normalize=False,
-                              file_name=os.path.join(log_dir, 'confusion_matrix_epoch{}.png'.format(epoch)))
+                              file_name=os.path.join(log_dir, 'confusion_matrix_epoch{}.png'.format(epoch+1)))
         print('Val Loss = {}'.format(loss_val))
         print('Accuracy of the network on the test images: %.3f' % (
                 accuracy_total))
         if loss_val < best_loss:
             best_loss = loss_val
-            torch.save(model.state_dict(), os.path.join(log_dir, 'model_epoch{}.pth'.format(epoch)))
+            torch.save(model.state_dict(), os.path.join(log_dir, 'model_epoch{}.pth'.format(epoch+1)))
             print("Copied best model weights!")
     print('End of training!')
 
