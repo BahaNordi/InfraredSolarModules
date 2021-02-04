@@ -21,7 +21,7 @@ class CNN(nn.Module):
         self.linear1 = nn.Linear(64 * 5 * 3, 512)
         self.bn7 = nn.BatchNorm1d(512)
         self.linear2 = nn.Linear(512, 12)
-        # self.dropout = nn.Dropout(p=0.1)
+        self.dropout = nn.Dropout(p=0.1)
 
     def forward(self, x):
         x = self.pool(F.relu(self.bn1(self.conv1(x))))
@@ -33,7 +33,7 @@ class CNN(nn.Module):
         x = x.view(x.size(0), -1)
         x = self.dropout(x)
         x = F.relu(self.bn7(self.linear1(x)))
-        x = self.dropout(x)
+        # x = self.dropout(x)
         x = self.linear2(x)
         return F.log_softmax(x, -1)
 
