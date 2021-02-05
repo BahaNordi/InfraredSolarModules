@@ -42,5 +42,5 @@ train:
 
 scheduler:
   method: MultiStepLR
-  step_size: [25, 50]
+  step_size: [25, 50, 75,100]
   gamma: 0.1
