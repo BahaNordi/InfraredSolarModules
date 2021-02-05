@@ -3,8 +3,9 @@ import os
 import sys
 from InfraredSolarModules.data.dataloader import SolarDataLoader
 from InfraredSolarModules.config.yaml_reader import open_yaml
-from InfraredSolarModules.module.model import CNN
-from torchvision.models import resnet18, resnet34
+from InfraredSolarModules.models.model import CNN
+# from torchvision.models import resnet18, resnet34
+from InfraredSolarModules.models.resnet import resnet20, resnet32
 import torch
 import torch.optim as optim
 import torch.nn.functional as F
@@ -44,7 +45,7 @@ def train_pipeline(optimizer, train_loader, model, device, model_name='resnet'):
     return loss_total
 
 
-def val_pipeline(val_loader, model, device):
+def val_pipeline(val_loader, model, device, model_name='resnet'):
     # history of loss values in each epoch
     loss_history = {
         "val": []
@@ -64,6 +65,8 @@ def val_pipeline(val_loader, model, device):
             image, labels = batch
             image, labels = image.to(device), labels.to(device)
             pred = model(image)
+            if "resnet" in model_name.lower():
+                pred = F.log_softmax(pred, -1)
             all_pred = torch.cat(
                 (all_pred, pred)
                 , dim=0
@@ -115,10 +118,10 @@ def train(config):
     # defining model
     if model_name.lower() == "cnn":
         model = CNN().to(device)
-    elif model_name.lower() == "resnet18":
-        model = resnet18(pretrained=True).to(device)
-    elif model_name.lower() == "resnet34":
-        model = resnet34(pretrained=True).to(device)
+    elif model_name.lower() == "resnet20":
+        model = resnet20().to(device)
+    elif model_name.lower() == "resnet32":
+        model = resnet32().to(device)
     else:
         raise RuntimeError("Model is not supported")
 
@@ -142,7 +145,7 @@ def train(config):
 
         # validation mode
         model.eval()
-        loss_val, accuracy_total, cm = val_pipeline(val_loader, model, device)
+        loss_val, accuracy_total, cm = val_pipeline(val_loader, model, device, model_name)
         plot_confusion_matrix(cm, val_loader.dataset.classes, normalize=False,
                               file_name=os.path.join(log_dir, 'confusion_matrix_epoch{}.png'.format(epoch+1)))
         print('Val Loss = {}'.format(loss_val))
