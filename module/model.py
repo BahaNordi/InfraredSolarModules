@@ -5,7 +5,7 @@ import torch.nn.functional as F
 class CNN(nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = nn.Conv2d(1, 16, 3, padding=1)
+        self.conv1 = nn.Conv2d(3, 16, 3, padding=1)
         self.bn1 = nn.BatchNorm2d(16)
         self.conv2 = nn.Conv2d(16, 16, 3, padding=1)
         self.bn2 = nn.BatchNorm2d(16)

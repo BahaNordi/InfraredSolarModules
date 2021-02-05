@@ -22,8 +22,8 @@ data:
 
 
   preprocessing:
-    mean: 0.47684264
-    std: 0.26336077
+    mean: 0.6512266
+    std: 0.15099779
 
 train:
   epoch: 100
@@ -35,6 +35,9 @@ train:
     lr: 0.1
     weight_decay: 0.0001
     momentum: 0.9
+
+  model:
+    model_name: resnet18
 
 
 scheduler:

@@ -3,7 +3,8 @@ import os
 import sys
 from InfraredSolarModules.data.dataloader import SolarDataLoader
 from InfraredSolarModules.config.yaml_reader import open_yaml
-from InfraredSolarModules.model import CNN
+from InfraredSolarModules.module.model import CNN
+from torchvision.models import resnet18, resnet34
 import torch
 import torch.optim as optim
 import torch.nn.functional as F
@@ -12,7 +13,7 @@ from InfraredSolarModules.utils.metrics import generate_cm
 from InfraredSolarModules.utils.plot_confusion_matrix import plot_confusion_matrix
 
 
-def train_pipeline(optimizer, train_loader, model, device):
+def train_pipeline(optimizer, train_loader, model, device, model_name='resnet'):  # default: model_name='resnet'
 
     # history of loss values in each epoch
     loss_history = {
@@ -30,6 +31,8 @@ def train_pipeline(optimizer, train_loader, model, device):
         image, labels = image.to(device), labels.to(device)
         optimizer.zero_grad()
         pred = model(image)
+        if "resnet" in model_name.lower():
+            pred = F.log_softmax(pred, -1)
         loss = F.nll_loss(pred, labels)
         loss.backward()
         optimizer.step()
@@ -100,8 +103,6 @@ def train(config):
     val_loader = data_loader.val_loader
     # print(train_loader.__len__())
 
-    # defining model
-    model = CNN().to(device)
     lr = config['train']['optim']['lr']
     weight_decay = config['train']['optim']['weight_decay']
     momentum = config['train']['optim']['momentum']
@@ -109,6 +110,18 @@ def train(config):
     step_size = config['scheduler']['step_size']
     log_dir = config['log']['log_dir']
     gamma = config['scheduler']['gamma']
+    model_name = config['train']['model']['model_name']
+
+    # defining model
+    if model_name.lower() == "cnn":
+        model = CNN().to(device)
+    elif model_name.lower() == "resnet18":
+        model = resnet18(pretrained=True).to(device)
+    elif model_name.lower() == "resnet34":
+        model = resnet34(pretrained=True).to(device)
+    else:
+        raise RuntimeError("Model is not supported")
+
     if config['train']['optim']['method'] == 'SGD':
         optimizer = optim.SGD(model.parameters(), lr=lr,  momentum=momentum,
                               weight_decay=weight_decay)
@@ -124,7 +137,7 @@ def train(config):
         # train model on training dataset
         model.train()
         scheduler.step()
-        loss_train = train_pipeline(optimizer, train_loader, model, device)
+        loss_train = train_pipeline(optimizer, train_loader, model, device, model_name)
         print('Train Loss = {}'.format(loss_train))
 
         # validation mode
