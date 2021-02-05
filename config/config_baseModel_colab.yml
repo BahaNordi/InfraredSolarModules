@@ -33,7 +33,7 @@ train:
   optim:
     method: SGD
     lr: 0.1
-    weight_decay: 0.00001
+    weight_decay: 0.0001
     momentum: 0.9
 
   model:
