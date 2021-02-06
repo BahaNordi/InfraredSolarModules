@@ -17,7 +17,7 @@ data:
   train_dir: '/content/gdrive/MyDrive/Colab_Notebooks/jua_solar/solar_data/InfraredSolarModules/train'
   val_dir: '/content/gdrive/MyDrive/Colab_Notebooks/jua_solar/solar_data/InfraredSolarModules/val'
   batch_size: 256
-  num_workers: 32
+  num_workers: 64
 
 
 
