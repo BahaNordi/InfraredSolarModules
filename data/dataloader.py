@@ -2,6 +2,7 @@ from torchvision import transforms
 import torch
 from torchvision.datasets import ImageFolder
 import warnings
+from InfraredSolarModules.data.augmentations import AddGaussianNoise
 
 warnings.filterwarnings("ignore")
 
@@ -28,6 +29,7 @@ class SolarDataLoader(object):
                 transforms.RandomCrop((40, 24), padding=(2, 2, 0, 0)),
                 transforms.ColorJitter(brightness=0.05, contrast=0.05, saturation=0.1,
                                        hue=0.05),
+                AddGaussianNoise(0., 1.),
                 transforms.ToTensor(),
                 transforms.Normalize([self.mean, self.mean, self.mean], [self.std,
                                                                          self.std,
