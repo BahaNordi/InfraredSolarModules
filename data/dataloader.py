@@ -29,11 +29,11 @@ class SolarDataLoader(object):
                 transforms.RandomCrop((40, 24), padding=(2, 2, 0, 0)),
                 transforms.ColorJitter(brightness=0.05, contrast=0.05, saturation=0.1,
                                        hue=0.05),
-                AddGaussianNoise(0., 1.),
                 transforms.ToTensor(),
                 transforms.Normalize([self.mean, self.mean, self.mean], [self.std,
                                                                          self.std,
-                                                                         self.std])])  # transforms.Normalize(self.mean, self.std) #gray scale channel
+                                                                         self.std]),
+                AddGaussianNoise(0., 1.)])  # transforms.Normalize(self.mean, self.std) #gray scale channel
 
             train = ImageFolder(self.train_dir, train_transform)
 
