@@ -164,7 +164,7 @@ def train(config):
         print('Val Loss = {}'.format(loss_val))
         print('Accuracy of the network on the test images: %.3f' % (
                 accuracy_total))
-        if loss_val < best_loss or accuracy_total < best_accuracy:
+        if loss_val < best_loss or best_accuracy < accuracy_total:
             best_loss = loss_val
             best_accuracy = accuracy_total
             torch.save(model.state_dict(), os.path.join(log_dir, 'model_epoch{}.pth'.format(epoch+1)))
