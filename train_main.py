@@ -145,6 +145,7 @@ def train(config):
 
     # initialize best loss to a large value
     best_loss = float('inf')
+    best_accuracy = float('inf')
 
     for epoch in range(num_epochs):
         print('================= Started Epoch {}/{} ================='.format(epoch + 1, num_epochs))
@@ -163,8 +164,9 @@ def train(config):
         print('Val Loss = {}'.format(loss_val))
         print('Accuracy of the network on the test images: %.3f' % (
                 accuracy_total))
-        if loss_val < best_loss:
+        if loss_val < best_loss or accuracy_total < best_accuracy:
             best_loss = loss_val
+            best_accuracy = accuracy_total
             torch.save(model.state_dict(), os.path.join(log_dir, 'model_epoch{}.pth'.format(epoch+1)))
             print("Copied best model weights!")
     print('End of training!')
