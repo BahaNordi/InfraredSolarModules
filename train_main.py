@@ -145,7 +145,7 @@ def train(config):
 
     # initialize best loss to a large value
     best_loss = float('inf')
-    best_accuracy = float('inf')
+    best_accuracy = 0
 
     for epoch in range(num_epochs):
         print('================= Started Epoch {}/{} ================='.format(epoch + 1, num_epochs))
