@@ -122,18 +122,20 @@ def train(config):
 
     # defining model
     if model_name.lower() == "cnn":
-        model = CNN().to(device)
+        model = CNN()
     elif model_name.lower() == "resnet20":
-        model = resnet20(pretrained=pretrained).to(device)
+        model = resnet20(pretrained=pretrained)
         if pretrained is not None:
             redefine_fc_layer(model)
 
     elif model_name.lower() == "resnet32":
-        model = resnet32().to(device)
+        model = resnet32()
         if pretrained is not None:
             redefine_fc_layer(model)
     else:
         raise RuntimeError("Model is not supported")
+
+    model = model.to(device)
 
     if config['train']['optim']['method'] == 'SGD':
         optimizer = optim.SGD(model.parameters(), lr=lr,  momentum=momentum,
