@@ -37,8 +37,8 @@ train:
     momentum: 0.9
 
   model:
-    model_name: resnet32  # cnn
-    prtrained: 'cifar10'
+    model_name: resnet20  # cnn
+    prtrained: 'cifar100'
 
 
 scheduler:
