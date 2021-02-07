@@ -4,15 +4,19 @@ import sys
 from InfraredSolarModules.data.dataloader import SolarDataLoader
 from InfraredSolarModules.config.yaml_reader import open_yaml
 from InfraredSolarModules.models.model import CNN
-# from torchvision.models import resnet18, resnet34
-from InfraredSolarModules.models.resnet import resnet20, resnet32
+from InfraredSolarModules.models.resnet_customized import resnet20, resnet32
 import torch
 import torch.optim as optim
+import torch.nn as nn
 import torch.nn.functional as F
 from torch.optim.lr_scheduler import MultiStepLR
 from InfraredSolarModules.utils.metrics import generate_cm
 from InfraredSolarModules.utils.plot_confusion_matrix import plot_confusion_matrix
 
+
+def redefine_fc_layer(model):
+    model.fc = nn.Linear(model.fc.in_features, 12)
+    return model
 
 def train_pipeline(optimizer, train_loader, model, device, model_name='resnet'):  # default: model_name='resnet'
 
@@ -114,14 +118,20 @@ def train(config):
     log_dir = config['log']['log_dir']
     gamma = config['scheduler']['gamma']
     model_name = config['train']['model']['model_name']
+    pretrained = config['train']['model']['prtrained']
 
     # defining model
     if model_name.lower() == "cnn":
         model = CNN().to(device)
     elif model_name.lower() == "resnet20":
-        model = resnet20().to(device)
+        model = resnet20(pretrained=pretrained).to(device)
+        if pretrained is not None:
+            redefine_fc_layer(model)
+
     elif model_name.lower() == "resnet32":
         model = resnet32().to(device)
+        if pretrained is not None:
+            redefine_fc_layer(model)
     else:
         raise RuntimeError("Model is not supported")
 

@@ -31,10 +31,23 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.nn.init as init
+import torch.utils.model_zoo as model_zoo
 
 from torch.autograd import Variable
 
-__all__ = ['ResNet', 'resnet20', 'resnet32', 'resnet44', 'resnet56', 'resnet110', 'resnet1202']
+__all__ = ['ResNet', 'resnet20']
+
+pretrained_settings = {
+    "cifar10": {
+        'resnet20': 'https://github.com/chenyaofo/CIFAR-pretrained-models/releases/download/resnet/cifar10-resnet20-30abc31d.pth',
+        'num_classes': 10
+    },
+    "cifar100": {
+        'resnet20': 'https://github.com/chenyaofo/CIFAR-pretrained-models/releases/download/resnet/cifar100-resnet20-8412cc70.pth',
+        'num_classes': 100
+    }
+
+}
 
 def _weights_init(m):
     classname = m.__class__.__name__
@@ -117,8 +130,17 @@ class ResNet(nn.Module):
         return out
 
 
-def resnet20():
-    return ResNet(BasicBlock, [3, 3, 3], num_classes=12)
+def resnet20(pretrained=None):
+    if pretrained is None:
+        model = ResNet(BasicBlock, [3, 3, 3], num_classes=12)
+    elif pretrained == 'cifar10':
+        model = ResNet(BasicBlock, [3, 3, 3], num_classes=pretrained_settings[pretrained]['num_classes'])
+        model.load_state_dict(model_zoo.load_url(pretrained_settings[pretrained]['resnet20']))
+    else:
+        pretrained = 'cifar100'
+        model = ResNet(BasicBlock, [3, 3, 3], num_classes=pretrained_settings[pretrained]['num_classes'])
+        model.load_state_dict(model_zoo.load_url(pretrained_settings[pretrained]['resnet20']))
+    return model
 
 
 def resnet32():
