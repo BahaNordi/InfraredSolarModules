@@ -28,7 +28,7 @@ class SolarDataLoader(object):
                 transforms.RandomRotation(180),
                 # transforms.RandomCrop((40, 24), padding=(2, 2, 0, 0)),
                 transforms.RandomApply(torch.nn.ModuleList([transforms.RandomCrop((40, 24), padding=(2, 2, 0, 0))]),
-                                       p=0.5),
+                                       p=0.7),
                 transforms.RandomApply(torch.nn.ModuleList([transforms.ColorJitter(brightness=0.05, contrast=0.05,
                                                                                    saturation=0.1, hue=0.05)]), p=0.3),
                 transforms.RandomApply(torch.nn.ModuleList([transforms.GaussianBlur([3], sigma=(0.1, 2.0))]), p=0.3),
@@ -42,10 +42,10 @@ class SolarDataLoader(object):
             weights = self.make_weights_for_balanced_classes(train.imgs, len(train.classes))
             weights = torch.DoubleTensor(weights)
             sampler = torch.utils.data.sampler.WeightedRandomSampler(weights, len(weights))
-            # self._train_loader = torch.utils.data.DataLoader(train, sampler=sampler, batch_size=self.batch_size,
-            #                                                  num_workers=self.num_workers)
-            self._train_loader = torch.utils.data.DataLoader(train, batch_size=self.batch_size, shuffle=True,
+            self._train_loader = torch.utils.data.DataLoader(train, sampler=sampler, batch_size=self.batch_size,
                                                              num_workers=self.num_workers)
+            # self._train_loader = torch.utils.data.DataLoader(train, batch_size=self.batch_size, shuffle=True,
+            #                                                  num_workers=self.num_workers)
         return self._train_loader
 
     @property
