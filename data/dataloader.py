@@ -28,7 +28,7 @@ class SolarDataLoader(object):
                 transforms.RandomRotation(180),
                 # transforms.RandomCrop((40, 24), padding=(2, 2, 0, 0)),
                 transforms.RandomApply(torch.nn.ModuleList([transforms.RandomCrop((40, 24), padding=(2, 2, 0, 0))]),
-                                       p=0.7),
+                                       p=0.5),
                 transforms.RandomApply(torch.nn.ModuleList([transforms.ColorJitter(brightness=0.05, contrast=0.05,
                                                                                    saturation=0.1, hue=0.05)]), p=0.3),
                 transforms.RandomApply(torch.nn.ModuleList([transforms.GaussianBlur([3], sigma=(0.1, 2.0))]), p=0.3),
