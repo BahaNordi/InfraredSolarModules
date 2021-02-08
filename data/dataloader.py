@@ -23,8 +23,8 @@ class SolarDataLoader(object):
         if not self._train_loader:
             train_transform = transforms.Compose([
                 # transforms.Grayscale(),
-                transforms.RandomHorizontalFlip(p=0.5),
-                transforms.RandomVerticalFlip(p=0.5),
+                transforms.RandomHorizontalFlip(p=0.3),
+                transforms.RandomVerticalFlip(p=0.3),
                 transforms.RandomRotation(180),
                 # transforms.RandomCrop((40, 24), padding=(2, 2, 0, 0)),
                 transforms.RandomApply(torch.nn.ModuleList([transforms.RandomCrop((40, 24), padding=(2, 2, 0, 0))]),
