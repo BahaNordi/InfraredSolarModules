@@ -16,8 +16,8 @@ checkpoint:
 data:
   train_dir: '/home/baha/codes/solar_data/InfraredSolarModules/train'
   val_dir: '/home/baha/codes/solar_data/InfraredSolarModules/val'
-  batch_size: 64
-  num_workers: 8
+  batch_size: 128
+  num_workers: 4
 
 
 
@@ -37,8 +37,8 @@ train:
     momentum: 0.9
 
   model:
-    model_name: resnet20  # cnn
-    prtrained: 'cifar10'
+    model_name: cnn  # cnn
+    prtrained: null
 
 
 scheduler:

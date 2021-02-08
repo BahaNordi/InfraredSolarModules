@@ -12,13 +12,16 @@ import torch.nn.functional as F
 from torch.optim.lr_scheduler import MultiStepLR
 from InfraredSolarModules.utils.metrics import generate_cm
 from InfraredSolarModules.utils.plot_confusion_matrix import plot_confusion_matrix
+from torch.utils.tensorboard import SummaryWriter
 
 
 def redefine_fc_layer(model):
     model.fc = nn.Linear(model.fc.in_features, 12)
     return model
 
-def train_pipeline(optimizer, train_loader, model, device, model_name='resnet'):  # default: model_name='resnet'
+
+def train_pipeline(optimizer, train_loader, model, device, epoch, tb_writer,
+                   model_name='resnet'):  # default: model_name='resnet'
 
     # history of loss values in each epoch
     loss_history = {
@@ -43,13 +46,17 @@ def train_pipeline(optimizer, train_loader, model, device, model_name='resnet'):
         optimizer.step()
         if itr % 20 == 0:
             print('Train iteration {} had loss {:.6f}'.format(itr, loss))
+            # ...log the running loss
+            tb_writer.add_scalar('training loss',
+                                 loss, epoch * len(train_loader) + itr)
 
         loss_history["train"].append(loss)
+        # tb_writer.close()
     loss_total = torch.mean(torch.Tensor(loss_history["train"]))
     return loss_total
 
 
-def val_pipeline(val_loader, model, device, model_name='resnet'):
+def val_pipeline(val_loader, model, device, epoch, tb_writer, model_name='resnet'):
     # history of loss values in each epoch
     loss_history = {
         "val": []
@@ -80,6 +87,9 @@ def val_pipeline(val_loader, model, device, model_name='resnet'):
             loss_history["val"].append(loss)
             correct, total, multiclass_correct, multiclass_total = \
                 multi_acc(pred, labels, correct, total, multiclass_correct, multiclass_total, batch_size)
+            if itr % 20 == 0:
+                tb_writer.add_scalar('val loss',
+                                     loss, epoch * len(val_loader) + itr)
         loss_total = torch.mean(torch.Tensor(loss_history["val"]))
         cm = generate_cm(val_loader.dataset.targets, all_pred.cpu())
         for i, class_id in enumerate(val_loader.dataset.classes):
@@ -119,6 +129,7 @@ def train(config):
     gamma = config['scheduler']['gamma']
     model_name = config['train']['model']['model_name']
     pretrained = config['train']['model']['prtrained']
+    experiment_name = config['log']['experiment_name']
 
     # defining model
     if model_name.lower() == "cnn":
@@ -138,7 +149,7 @@ def train(config):
     model = model.to(device)
 
     if config['train']['optim']['method'] == 'SGD':
-        optimizer = optim.SGD(model.parameters(), lr=lr,  momentum=momentum,
+        optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum,
                               weight_decay=weight_decay)
     # train_pipeline(optimizer, train_loader, model)
     scheduler = MultiStepLR(optimizer, milestones=step_size, gamma=gamma)
@@ -146,28 +157,28 @@ def train(config):
     # initialize best loss to a large value
     best_loss = float('inf')
     best_accuracy = 0
-
+    tb_writer = SummaryWriter(os.path.join(log_dir, experiment_name))
     for epoch in range(num_epochs):
         print('================= Started Epoch {}/{} ================='.format(epoch + 1, num_epochs))
 
         # train model on training dataset
         model.train()
         scheduler.step()
-        loss_train = train_pipeline(optimizer, train_loader, model, device, model_name)
+        loss_train = train_pipeline(optimizer, train_loader, model, device, epoch, tb_writer, model_name)
         print('Train Loss = {}'.format(loss_train))
 
         # validation mode
         model.eval()
-        loss_val, accuracy_total, cm = val_pipeline(val_loader, model, device, model_name)
+        loss_val, accuracy_total, cm = val_pipeline(val_loader, model, device, epoch, tb_writer, model_name)
         plot_confusion_matrix(cm, val_loader.dataset.classes, normalize=False,
-                              file_name=os.path.join(log_dir, 'confusion_matrix_epoch{}.png'.format(epoch+1)))
+                              file_name=os.path.join(log_dir, 'confusion_matrix_epoch{}.png'.format(epoch + 1)))
         print('Val Loss = {}'.format(loss_val))
         print('Accuracy of the network on the test images: %.3f' % (
-                accuracy_total))
+            accuracy_total))
         if loss_val < best_loss or best_accuracy < accuracy_total:
             best_loss = loss_val
             best_accuracy = accuracy_total
-            torch.save(model.state_dict(), os.path.join(log_dir, 'model_epoch{}.pth'.format(epoch+1)))
+            torch.save(model.state_dict(), os.path.join(log_dir, 'model_epoch{}.pth'.format(epoch + 1)))
             print("Copied best model weights!")
     print('End of training!')
 
