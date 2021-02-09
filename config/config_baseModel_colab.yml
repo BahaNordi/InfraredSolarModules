@@ -38,7 +38,7 @@ train:
 
   model:
     model_name: resnet32  # cnn
-    prtrained: 'cifar10'
+    prtrained: 'cifar100'
 
 
 scheduler:
