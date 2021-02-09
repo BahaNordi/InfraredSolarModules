@@ -140,7 +140,7 @@ def train(config):
             redefine_fc_layer(model)
 
     elif model_name.lower() == "resnet32":
-        model = resnet32()
+        model = resnet32(pretrained=pretrained)
         if pretrained is not None:
             redefine_fc_layer(model)
     else:
