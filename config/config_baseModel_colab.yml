@@ -26,7 +26,7 @@ data:
     std: 0.15099779
 
 train:
-  epoch: 200
+  epoch: 100
   loss:
   weight: null
 
@@ -38,10 +38,10 @@ train:
 
   model:
     model_name: resnet32  # cnn
-    prtrained: 'cifar100'
+    prtrained: 'cifar10'
 
 
 scheduler:
   method: MultiStepLR
-  step_size: [50, 100, 150]  # [30, 60, 90]
+  step_size: [30, 60, 90]
   gamma: 0.1
