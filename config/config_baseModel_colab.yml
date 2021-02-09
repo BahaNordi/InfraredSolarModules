@@ -37,7 +37,7 @@ train:
     momentum: 0.9
 
   model:
-    model_name: resnet32  # cnn
+    model_name: densenet  # cnn
     prtrained: 'cifar100'
 
 
