@@ -144,7 +144,7 @@ def train(config):
         model = resnet32(pretrained=pretrained)
         if pretrained is not None:
             redefine_fc_layer(model)
-    elif model_name.lower() == "densenet":
+    elif model_name.lower() == "densenet":  # in case of pretrained=true, we need to change the redefine_fc_layer-layer
         model = densenet121(num_class=12)
         # if pretrained is not None:
         #     redefine_fc_layer(model)
