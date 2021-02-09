@@ -5,6 +5,7 @@ from InfraredSolarModules.data.dataloader import SolarDataLoader
 from InfraredSolarModules.config.yaml_reader import open_yaml
 from InfraredSolarModules.models.model import CNN
 from InfraredSolarModules.models.resnet_customized import resnet20, resnet32
+from InfraredSolarModules.models.densenet_customized import densenet121
 import torch
 import torch.optim as optim
 import torch.nn as nn
@@ -39,7 +40,7 @@ def train_pipeline(optimizer, train_loader, model, device, epoch, tb_writer,
         image, labels = image.to(device), labels.to(device)
         optimizer.zero_grad()
         pred = model(image)
-        if "resnet" in model_name.lower():
+        if "resnet" in model_name.lower() or "dense" in model_name.lower():
             pred = F.log_softmax(pred, -1)
         loss = F.nll_loss(pred, labels)
         loss.backward()
@@ -76,7 +77,7 @@ def val_pipeline(val_loader, model, device, epoch, tb_writer, model_name='resnet
             image, labels = batch
             image, labels = image.to(device), labels.to(device)
             pred = model(image)
-            if "resnet" in model_name.lower():
+            if "resnet" in model_name.lower() or "dense" in model_name.lower():
                 pred = F.log_softmax(pred, -1)
             all_pred = torch.cat(
                 (all_pred, pred)
@@ -143,6 +144,10 @@ def train(config):
         model = resnet32(pretrained=pretrained)
         if pretrained is not None:
             redefine_fc_layer(model)
+    elif model_name.lower() == "densenet":
+        model = densenet121(num_class=12)
+        # if pretrained is not None:
+        #     redefine_fc_layer(model)
     else:
         raise RuntimeError("Model is not supported")
 
