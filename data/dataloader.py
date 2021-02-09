@@ -68,6 +68,9 @@ class SolarDataLoader(object):
         N = float(sum(count))
         for i in range(nclasses):
             weight_per_class[i] = N / float(count[i])
+        # manualy increased the weight of normal class from 2 to 10 to avoid under representing diversity
+        # in the normal class
+        weight_per_class[7] = 10.
         weight = [0] * len(images)
         for idx, val in enumerate(images):
             weight[idx] = weight_per_class[val[1]]
