@@ -7,9 +7,9 @@
 import torch
 import torch.nn as nn
 
-
-
-#"""Bottleneck layers. Although each layer only produces k
+#"""
+# https://github.com/weiaicunzai/pytorch-cifar100/blob/master/models/densenet.py
+# Bottleneck layers. Although each layer only produces k
 #output feature-maps, it typically has many more inputs. It
 #has been noted in [37, 11] that a 1×1 convolution can be in-
 #troduced as bottleneck layer before each 3×3 convolution
