@@ -90,9 +90,9 @@ class SolarTestDataLoader(object):
         self.transforms = {1: transforms.RandomHorizontalFlip(p=1),
                            2: transforms.RandomVerticalFlip(p=1),
                            3: transforms.RandomRotation(180),
-                           4: transforms.CenterCrop(35),
-                           5: transforms.ColorJitter(brightness=0.05, contrast=0.05, saturation=0.1, hue=0.05),
-                           6: transforms.GaussianBlur([3], sigma=(0.1, 2.0))}
+                           # 4: transforms.CenterCrop(35),
+                           4: transforms.ColorJitter(brightness=0.05, contrast=0.05, saturation=0.1, hue=0.05),
+                           5: transforms.GaussianBlur([3], sigma=(0.1, 2.0))}
 
         if augmentation_index == 0:
             self.transform = []

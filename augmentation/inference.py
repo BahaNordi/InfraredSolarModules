@@ -20,7 +20,7 @@ if __name__ == "__main__":
     checkpoint = torch.load(config['checkpoint']['init'], map_location=torch.device('cpu'))
     model.load_state_dict(checkpoint)
     model.eval()
-    ensemble_rounds = 7
+    ensemble_rounds = 6
     predictions_ensemble = []
     with torch.no_grad():
         for ensemble in range(0, ensemble_rounds):
