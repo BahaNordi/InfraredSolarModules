@@ -19,7 +19,7 @@ def inference(config):
     if str(device) == 'cpu':
         checkpoint = torch.load(config['checkpoint']['init'], map_location=torch.device('cpu'))
     else:
-        checkpoint = torch.load(config['checkpoint']['init'])
+        checkpoint = torch.load(config['checkpoint']['init'], map_location=lambda storage, loc: storage)
     model.load_state_dict(checkpoint)
     model.eval()
     ensemble_rounds = 7
