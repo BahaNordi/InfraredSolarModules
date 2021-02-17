@@ -1,5 +1,4 @@
-import numpy as np
-import os
+import fire
 import sys
 import torch
 import torch.nn.functional as F
@@ -10,8 +9,8 @@ from InfraredSolarModules.models.resnet_customized import resnet20, resnet32
 from InfraredSolarModules.models.densenet_customized import densenet121
 from InfraredSolarModules.utils.metrics import generate_cm
 
-if __name__ == "__main__":
-    config = open_yaml(sys.argv[1])
+
+def inference(config):
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda:0" if use_cuda else "cpu")
     print('Running model on: ', device)
@@ -53,6 +52,7 @@ if __name__ == "__main__":
         accuracy_total))
 
 
-
-
+if __name__ == "__main__":
+    config = open_yaml(sys.argv[1])
+    fire.Fire(inference(config))
 
