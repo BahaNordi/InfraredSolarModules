@@ -20,8 +20,12 @@ if __name__ == "__main__":
     checkpoint = torch.load(config['checkpoint']['init'], map_location=torch.device('cpu'))
     model.load_state_dict(checkpoint)
     model.eval()
-    ensemble_rounds = 6
+    ensemble_rounds = 7
     predictions_ensemble = []
+    multiclass_correct = list(0. for i in range(12))
+    multiclass_total = list(0. for i in range(12))
+    correct = 0
+    total = 0
     with torch.no_grad():
         for ensemble in range(0, ensemble_rounds):
             # all_predictions = torch.FloatTensor()
@@ -30,18 +34,24 @@ if __name__ == "__main__":
             test_loader = data_loader.test_loader
             print("Ensemble round {}/{}".format(ensemble + 1, ensemble_rounds))
             for itr, batch in enumerate(data_loader.test_loader):
-                # if itr == 3:
+                # if itr == 4:
                 #     break
                 image, labels = batch
                 image, labels = image.to(device), labels.to(device)
                 pred = model(image)
                 pred = F.log_softmax(pred, -1)
                 all_predictions = torch.cat([all_predictions, pred], dim=0)
-            # all_predictions_numpy = F.log_softmax(all_predictions, -1)[:, 1]
             predictions_ensemble.append(all_predictions)
     all_predictions = torch.mean(torch.stack(predictions_ensemble), dim=0)
-    cm = generate_cm(data_loader.test_loader.dataset.targets[:all_predictions.shape[0]], all_predictions)
+    _, predicted = torch.max(all_predictions.data, 1)
+    all_labels = data_loader.test_loader.dataset.targets
+    correct = (predicted == torch.tensor(all_labels[:all_predictions.shape[0]])).sum().item()
+    cm = generate_cm(all_labels[:all_predictions.shape[0]], all_predictions)
     print(cm)
+    accuracy_total = 100 * correct / all_predictions.shape[0]
+    print('Accuracy of the network on the test images: %.3f' % (
+        accuracy_total))
+
 
 
 
