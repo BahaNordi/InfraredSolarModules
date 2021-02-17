@@ -22,12 +22,9 @@ def inference(config):
         checkpoint = torch.load(config['checkpoint']['init'])
     model.load_state_dict(checkpoint)
     model.eval()
-    ensemble_rounds = 2
+    ensemble_rounds = 7
     predictions_ensemble = []
-    multiclass_correct = list(0. for i in range(12))
-    multiclass_total = list(0. for i in range(12))
-    correct = 0
-    total = 0
+
     with torch.no_grad():
         for ensemble in range(0, ensemble_rounds):
             # all_predictions = torch.FloatTensor()
@@ -36,8 +33,8 @@ def inference(config):
             test_loader = data_loader.test_loader
             print("Ensemble round {}/{}".format(ensemble + 1, ensemble_rounds))
             for itr, batch in enumerate(data_loader.test_loader):
-                if itr == 1:
-                    break
+                # if itr == 1:
+                #     break
                 image, labels = batch
                 image, labels = image.to(device), labels.to(device)
                 pred = model(image)
