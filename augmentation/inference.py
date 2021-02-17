@@ -22,7 +22,7 @@ def inference(config):
         checkpoint = torch.load(config['checkpoint']['init'])
     model.load_state_dict(checkpoint)
     model.eval()
-    ensemble_rounds = 7
+    ensemble_rounds = 2
     predictions_ensemble = []
     multiclass_correct = list(0. for i in range(12))
     multiclass_total = list(0. for i in range(12))
@@ -36,8 +36,8 @@ def inference(config):
             test_loader = data_loader.test_loader
             print("Ensemble round {}/{}".format(ensemble + 1, ensemble_rounds))
             for itr, batch in enumerate(data_loader.test_loader):
-                # if itr == 4:
-                #     break
+                if itr == 1:
+                    break
                 image, labels = batch
                 image, labels = image.to(device), labels.to(device)
                 pred = model(image)
@@ -51,8 +51,7 @@ def inference(config):
     cm = generate_cm(all_labels[:all_predictions.shape[0]], all_predictions)
     print(cm)
     accuracy_total = 100 * correct / all_predictions.shape[0]
-    print('Accuracy of the network on the test images: %.3f' % (
-        accuracy_total))
+    print('Accuracy of the network on the test images: %.3f' % accuracy_total)
 
 
 if __name__ == "__main__":
