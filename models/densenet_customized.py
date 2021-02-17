@@ -15,6 +15,8 @@ import torch.nn as nn
 #troduced as bottleneck layer before each 3×3 convolution
 #to reduce the number of input feature-maps, and thus to
 #improve computational efficiency."""
+
+
 class Bottleneck(nn.Module):
     def __init__(self, in_channels, growth_rate):
         super().__init__()
