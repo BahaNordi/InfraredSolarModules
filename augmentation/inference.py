@@ -16,7 +16,10 @@ def inference(config):
     print('Running model on: ', device)
     model = densenet121()
     model = model.to(device)
-    checkpoint = torch.load(config['checkpoint']['init'], map_location=torch.device(device))
+    if str(device) == 'cpu':
+        checkpoint = torch.load(config['checkpoint']['init'], map_location=torch.device('cpu'))
+    else:
+        checkpoint = torch.load(config['checkpoint']['init'])
     model.load_state_dict(checkpoint)
     model.eval()
     ensemble_rounds = 7
