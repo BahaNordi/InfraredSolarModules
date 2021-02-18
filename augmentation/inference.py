@@ -22,7 +22,7 @@ def inference(config):
         checkpoint = torch.load(config['checkpoint']['init'], map_location=lambda storage, loc: storage)
     model.load_state_dict(checkpoint)
     model.eval()
-    ensemble_rounds = 7
+    ensemble_rounds = 8
     predictions_ensemble = []
 
     with torch.no_grad():

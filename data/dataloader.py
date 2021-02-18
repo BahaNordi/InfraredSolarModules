@@ -92,7 +92,9 @@ class SolarTestDataLoader(object):
                            3: transforms.RandomRotation(180),
                            4: transforms.CenterCrop(35),
                            5: transforms.ColorJitter(brightness=0.05, contrast=0.05, saturation=0.1, hue=0.05),
-                           6: transforms.GaussianBlur([3], sigma=(0.1, 2.0))}
+                           6: transforms.GaussianBlur([3], sigma=(0.1, 2.0)),
+                           7: transforms.RandomCrop((40, 24), padding=(2, 2, 0, 0))
+                           }
 
         if augmentation_index == 0:
             self.transform = []

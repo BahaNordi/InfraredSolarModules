@@ -16,17 +16,17 @@ checkpoint:
 data:
   train_dir: '/home/baha/codes/solar_data/InfraredSolarModules/train'
   val_dir: '/home/baha/codes/solar_data/InfraredSolarModules/val'
-  batch_size: 128
-  num_workers: 4
-
-
+  cifar100_train_dir: '/home/baha/codes/solar_data/cifar100_data/train'
+  cifar100_val_dir: '/home/baha/codes/solar_data/cifar100_data/val'
+  batch_size: 32
+  num_workers: 2
 
   preprocessing:
     mean: 0.6512266
     std: 0.15099779
 
 train:
-  epoch: 100
+  epoch: 350
   loss:
   weight: null
 
@@ -43,5 +43,5 @@ train:
 
 scheduler:
   method: MultiStepLR
-  step_size: [30, 60, 90]
+  step_size: [90, 180, 270]
   gamma: 0.1

@@ -1,6 +1,8 @@
 import fire
 import os
 import sys
+
+from InfraredSolarModules.data.cifar100_dataloader import CIFARDataLoader
 from InfraredSolarModules.data.dataloader import SolarDataLoader
 from InfraredSolarModules.config.yaml_reader import open_yaml
 from InfraredSolarModules.models.model import CNN
@@ -29,10 +31,6 @@ def train_pipeline(optimizer, train_loader, model, device, epoch, tb_writer,
         "train": []
     }
 
-    # histroy of metric values in each epoch
-    metric_history = {
-        "train": []
-    }
     for itr, batch in enumerate(train_loader):
         # if itr == 1:
         #     break
@@ -63,10 +61,6 @@ def val_pipeline(val_loader, model, device, epoch, tb_writer, model_name='resnet
         "val": []
     }
 
-    # histroy of metric values in each epoch
-    metric_history = {
-        "val": []
-    }
     correct = 0
     total = 0
     multiclass_correct = list(0. for i in range(12))
@@ -116,7 +110,10 @@ def train(config):
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda:0" if use_cuda else "cpu")
     print('Running model on: ', device)
-    data_loader = SolarDataLoader(config)
+
+    # data_loader = SolarDataLoader(config)
+    data_loader = CIFARDataLoader(config)
+
     train_loader = data_loader.train_loader
     val_loader = data_loader.val_loader
     # print(train_loader.__len__())
@@ -145,7 +142,7 @@ def train(config):
         if pretrained is not None:
             redefine_fc_layer(model)
     elif model_name.lower() == "densenet":  # in case of pretrained=true, we need to change the redefine_fc_layer-layer
-        model = densenet121(num_class=12)
+        model = densenet121(num_class=100)  # 12
         # if pretrained is not None:
         #     redefine_fc_layer(model)
     else:
