@@ -34,7 +34,7 @@ def train_pipeline(optimizer, train_loader, model, device, epoch, tb_writer,
         "train": []
     }
     for itr, batch in enumerate(train_loader):
-        # if itr == 5:
+        # if itr == 1:
         #     break
         image, labels = batch
         image, labels = image.to(device), labels.to(device)

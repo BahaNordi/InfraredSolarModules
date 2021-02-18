@@ -33,7 +33,7 @@ def inference(config):
             test_loader = data_loader.test_loader
             print("Ensemble round {}/{}".format(ensemble + 1, ensemble_rounds))
             for itr, batch in enumerate(data_loader.test_loader):
-                # if itr == 1:
+                # if itr == 2:
                 #     break
                 image, labels = batch
                 image, labels = image.to(device), labels.to(device)
@@ -45,10 +45,19 @@ def inference(config):
     _, predicted = torch.max(all_predictions.data, 1)
     all_labels = data_loader.test_loader.dataset.targets
     correct = (predicted == torch.tensor(all_labels[:all_predictions.shape[0]])).sum().item()
+    c = (predicted == torch.tensor(all_labels[:all_predictions.shape[0]])).squeeze()
+    multiclass_correct = list(0. for i in range(12))
+    multiclass_total = list(0. for i in range(12))
+    for i in range(len(all_labels)):
+        label = all_labels[i]
+        multiclass_correct[label] += c[i].item()
+        multiclass_total[label] += 1
     cm = generate_cm(all_labels[:all_predictions.shape[0]], all_predictions)
     print(cm)
     accuracy_total = 100 * correct / all_predictions.shape[0]
     print('Accuracy of the network on the test images: %.3f' % accuracy_total)
+    for i, class_id in enumerate(test_loader.dataset.classes):
+        print('Accuracy of class %s:, %2d %%' % (class_id, 100 * multiclass_correct[i] / multiclass_total[i]))
 
 
 if __name__ == "__main__":
