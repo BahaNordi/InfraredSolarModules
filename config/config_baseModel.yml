@@ -29,6 +29,7 @@ train:
   epoch: 350
   loss:
   weight: null
+  number_class: 100
 
   optim:
     method: SGD

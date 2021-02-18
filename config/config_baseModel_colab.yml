@@ -31,6 +31,7 @@ train:
   epoch: 350  #200
   loss:
   weight: null
+  number_class: 100  #for cifar100,  #for solar data 12
 
   optim:
     method: SGD

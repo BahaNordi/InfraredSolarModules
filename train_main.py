@@ -18,8 +18,8 @@ from InfraredSolarModules.utils.plot_confusion_matrix import plot_confusion_matr
 from torch.utils.tensorboard import SummaryWriter
 
 
-def redefine_fc_layer(model):
-    model.fc = nn.Linear(model.fc.in_features, 12)
+def redefine_fc_layer(model, number_class):
+    model.fc = nn.Linear(model.fc.in_features, number_class)
     return model
 
 
@@ -55,7 +55,7 @@ def train_pipeline(optimizer, train_loader, model, device, epoch, tb_writer,
     return loss_total
 
 
-def val_pipeline(val_loader, model, device, epoch, tb_writer, model_name='resnet'):
+def val_pipeline(val_loader, model, device, epoch, tb_writer, number_class, model_name='resnet'):
     # history of loss values in each epoch
     loss_history = {
         "val": []
@@ -63,8 +63,8 @@ def val_pipeline(val_loader, model, device, epoch, tb_writer, model_name='resnet
 
     correct = 0
     total = 0
-    multiclass_correct = list(0. for i in range(12))
-    multiclass_total = list(0. for i in range(12))
+    multiclass_correct = list(0. for i in range(number_class))
+    multiclass_total = list(0. for i in range(number_class))
     with torch.no_grad():
         all_pred = torch.tensor([], device=device)
         for itr, batch in enumerate(val_loader):
@@ -117,7 +117,7 @@ def train(config):
     train_loader = data_loader.train_loader
     val_loader = data_loader.val_loader
     # print(train_loader.__len__())
-
+    number_class = config['train']['number_class']
     lr = config['train']['optim']['lr']
     weight_decay = config['train']['optim']['weight_decay']
     momentum = config['train']['optim']['momentum']
@@ -135,12 +135,12 @@ def train(config):
     elif model_name.lower() == "resnet20":
         model = resnet20(pretrained=pretrained)
         if pretrained is not None:
-            redefine_fc_layer(model)
+            redefine_fc_layer(model, number_class)
 
     elif model_name.lower() == "resnet32":
         model = resnet32(pretrained=pretrained)
         if pretrained is not None:
-            redefine_fc_layer(model)
+            redefine_fc_layer(model, number_class)
     elif model_name.lower() == "densenet":  # in case of pretrained=true, we need to change the redefine_fc_layer-layer
         model = densenet121(num_class=100)  # 12
         # if pretrained is not None:
@@ -171,7 +171,8 @@ def train(config):
 
         # validation mode
         model.eval()
-        loss_val, accuracy_total, cm = val_pipeline(val_loader, model, device, epoch, tb_writer, model_name)
+        loss_val, accuracy_total, cm = val_pipeline(val_loader, model, device, epoch, tb_writer, number_class,
+                                                    model_name)
         plot_confusion_matrix(cm, val_loader.dataset.classes, normalize=False,
                               file_name=os.path.join(log_dir, 'confusion_matrix_epoch{}.png'.format(epoch + 1)))
         print('Val Loss = {}'.format(loss_val))
