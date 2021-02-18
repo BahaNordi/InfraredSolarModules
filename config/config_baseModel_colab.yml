@@ -16,6 +16,8 @@ checkpoint:
 data:
   train_dir: '/content/gdrive/MyDrive/Colab_Notebooks/jua_solar/solar_data/InfraredSolarModules/train'
   val_dir: '/content/gdrive/MyDrive/Colab_Notebooks/jua_solar/solar_data/InfraredSolarModules/val'
+  cifar100_train_dir: '/content/gdrive/MyDrive/Colab_Notebooks/cifar100_data/train'
+  cifar100_val_dir: '/content/gdrive/MyDrive/Colab_Notebooks/cifar100_data/val'
   batch_size: 128
   num_workers: 16
 
@@ -26,7 +28,7 @@ data:
     std: 0.15099779
 
 train:
-  epoch: 200
+  epoch: 350  #200
   loss:
   weight: null
 
@@ -43,5 +45,5 @@ train:
 
 scheduler:
   method: MultiStepLR
-  step_size: [50, 100, 150]  #[30, 60, 90]
+  step_size: [90, 180, 270]  #solarData [50, 100, 150]
   gamma: 0.1
