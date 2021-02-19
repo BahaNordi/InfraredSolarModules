@@ -7,7 +7,7 @@ log:
   root:
 
 checkpoint:
-  init: '/content/gdrive/MyDrive/Colab_Notebooks/logs/solar/basic_conv/model_epoch64.pth'
+  init: '/content/gdrive/MyDrive/Colab_Notebooks/logs/solar/basic_conv/model_epoch80.pth'
   frequency:
     epoch: 1
 
@@ -28,7 +28,7 @@ data:
     std: 0.15099779
 
 train:
-  epoch: 150  #200
+  epoch: 70  #200
   loss:
   weight: null
   number_class: 100  #for cifar100,  #for solar data 12
@@ -46,5 +46,5 @@ train:
 
 scheduler:
   method: MultiStepLR
-  step_size: [2, 60, 120]  #solarData [50, 100, 150]
+  step_size: [40, 65]  #solarData [50, 100, 150]
   gamma: 0.1
