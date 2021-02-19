@@ -7,7 +7,7 @@ log:
   root:
 
 checkpoint:
-  init: null
+  init: '/content/gdrive/MyDrive/Colab_Notebooks/logs/solar/basic_conv/model_epoch64.pth'
   frequency:
     epoch: 1
 

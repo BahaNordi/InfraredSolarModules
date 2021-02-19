@@ -128,6 +128,7 @@ def train(config):
     model_name = config['train']['model']['model_name']
     pretrained = config['train']['model']['prtrained']
     experiment_name = config['log']['experiment_name']
+    checkpoint = config['checkpoint']['init']
 
     # defining model
     if model_name.lower() == "cnn":
@@ -149,6 +150,17 @@ def train(config):
         raise RuntimeError("Model is not supported")
 
     model = model.to(device)
+
+    # if checkpoint is not None:
+    #     checkpoint_dict = torch.load(checkpoint)
+    #     model.load_state_dict(checkpoint_dict)
+
+    if checkpoint is not None:
+        if str(device) == 'cpu':
+            checkpoint_dict = torch.load(checkpoint, map_location=torch.device('cpu'))
+        else:
+            checkpoint_dict = torch.load(checkpoint, map_location=lambda storage, loc: storage)
+        model.load_state_dict(checkpoint_dict)
 
     if config['train']['optim']['method'] == 'SGD':
         optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum,

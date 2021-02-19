@@ -7,7 +7,7 @@ log:
   root:
 
 checkpoint:
-  init: null
+  init: '/home/baha/codes/solar_data/cifar100_data/checkpoint/model_epoch64.pth'
   frequency:
     epoch: 1
 
