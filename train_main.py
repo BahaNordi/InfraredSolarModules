@@ -19,7 +19,11 @@ from torch.utils.tensorboard import SummaryWriter
 
 
 def redefine_fc_layer(model, number_class):
-    model.fc = nn.Linear(model.fc.in_features, number_class)
+    if hasattr(model, 'fc'):
+        model.fc = nn.Linear(model.fc.in_features, number_class)
+    elif hasattr(model, 'linear'):
+        model.linear = nn.Linear(model.linear.in_features, number_class)
+
     return model
 
 
@@ -106,13 +110,21 @@ def multi_acc(pred, labels, correct, total, multiclass_correct, multiclass_total
     return correct, total, multiclass_correct, multiclass_total
 
 
+def load_checkpoint(checkpoint, device):
+    if str(device) == 'cpu':
+        checkpoint_dict = torch.load(checkpoint, map_location=torch.device('cpu'))
+    else:
+        checkpoint_dict = torch.load(checkpoint, map_location=lambda storage, loc: storage)
+    return checkpoint_dict
+
+
 def train(config):
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda:0" if use_cuda else "cpu")
     print('Running model on: ', device)
 
-    # data_loader = SolarDataLoader(config)
-    data_loader = CIFARDataLoader(config)
+    data_loader = SolarDataLoader(config)
+    # data_loader = CIFARDataLoader(config)
 
     train_loader = data_loader.train_loader
     val_loader = data_loader.val_loader
@@ -142,24 +154,18 @@ def train(config):
         model = resnet32(pretrained=pretrained)
         if pretrained is not None:
             redefine_fc_layer(model, number_class)
-    elif model_name.lower() == "densenet":  # in case of pretrained=true, we need to change the redefine_fc_layer-layer
-        model = densenet121(num_class=100)  # 12
-        # if pretrained is not None:
-        #     redefine_fc_layer(model)
+    elif model_name.lower() == "densenet":  # in c
+        dense_checkpoint = load_checkpoint(pretrained, device)
+        model = densenet121(num_class=12, pretrained=dense_checkpoint)  # 12
+        if pretrained is not None:
+            redefine_fc_layer(model, number_class)
     else:
         raise RuntimeError("Model is not supported")
 
     model = model.to(device)
 
-    # if checkpoint is not None:
-    #     checkpoint_dict = torch.load(checkpoint)
-    #     model.load_state_dict(checkpoint_dict)
-
     if checkpoint is not None:
-        if str(device) == 'cpu':
-            checkpoint_dict = torch.load(checkpoint, map_location=torch.device('cpu'))
-        else:
-            checkpoint_dict = torch.load(checkpoint, map_location=lambda storage, loc: storage)
+        checkpoint_dict = load_checkpoint(checkpoint, device)
         model.load_state_dict(checkpoint_dict)
 
     if config['train']['optim']['method'] == 'SGD':

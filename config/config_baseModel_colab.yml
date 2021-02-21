@@ -7,7 +7,7 @@ log:
   root:
 
 checkpoint:
-  init: '/content/gdrive/MyDrive/Colab_Notebooks/logs/solar/basic_conv/model_epoch80.pth'
+  init: null
   frequency:
     epoch: 1
 
@@ -18,7 +18,7 @@ data:
   val_dir: '/content/gdrive/MyDrive/Colab_Notebooks/jua_solar/solar_data/InfraredSolarModules/val'
   cifar100_train_dir: '/content/gdrive/MyDrive/Colab_Notebooks/cifar100_data/train'
   cifar100_val_dir: '/content/gdrive/MyDrive/Colab_Notebooks/cifar100_data/val'
-  batch_size: 128
+  batch_size: 256
   num_workers: 16
 
 
@@ -28,23 +28,23 @@ data:
     std: 0.15099779
 
 train:
-  epoch: 70  #200
+  epoch: 200  #200
   loss:
   weight: null
-  number_class: 100  #for cifar100,  #for solar data 12
+  number_class: 12  #for cifar100,  #for solar data 12
 
   optim:
     method: SGD
-    lr: 0.001
+    lr: 0.1
     weight_decay: 0.0001
     momentum: 0.9
 
   model:
     model_name: densenet  # cnn, resnet20, resnet32
-    prtrained: 'cifar100' #cifar10, null
+    prtrained: '/content/gdrive/MyDrive/Colab_Notebooks/logs/solar/best_results/model_dense121_cifar100.pth'   #'cifar100' #cifar10, null
 
 
 scheduler:
   method: MultiStepLR
-  step_size: [40, 65]  #solarData [50, 100, 150]
+  step_size: [50, 100, 150]  #solarData [50, 100, 150]
   gamma: 0.1

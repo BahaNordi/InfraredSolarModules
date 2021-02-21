@@ -7,7 +7,7 @@ log:
   root:
 
 checkpoint:
-  init: '/home/baha/codes/solar_data/cifar100_data/checkpoint/model_epoch64.pth'
+  init: null
   frequency:
     epoch: 1
 
@@ -26,10 +26,10 @@ data:
     std: 0.15099779
 
 train:
-  epoch: 350
+  epoch: 200
   loss:
   weight: null
-  number_class: 100
+  number_class: 12
 
   optim:
     method: SGD
@@ -39,10 +39,10 @@ train:
 
   model:
     model_name: DenseNet  # cnn
-    prtrained: 'cifar10'
+    prtrained: '/home/baha/codes/solar_data/cifar100_data/model_dense121_cifar100.pth' # 'cifar100'
 
 
 scheduler:
   method: MultiStepLR
-  step_size: [90, 180, 270]
+  step_size: [50, 100, 150]
   gamma: 0.1
