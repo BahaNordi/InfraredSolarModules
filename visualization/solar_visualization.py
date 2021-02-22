@@ -34,4 +34,4 @@ def inference(config):
 if __name__ == "__main__":
     config = open_yaml(sys.argv[1])
     fire.Fire(inference(config))
-#tst
+
