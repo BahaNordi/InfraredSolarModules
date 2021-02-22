@@ -7,14 +7,6 @@
 import torch
 import torch.nn as nn
 
-pretrained_settings = {
-    "cifar100": {
-        'densenet121': 'https://github.com/chenyaofo/CIFAR-pretrained-models/releases/download/resnet/cifar100-resnet20-8412cc70.pth',
-        'num_classes': 12
-    }
-
-}
-
 
 # """
 # https://github.com/weiaicunzai/pytorch-cifar100/blob/master/models/densenet.py

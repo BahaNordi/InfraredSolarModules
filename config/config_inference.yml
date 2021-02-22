@@ -7,7 +7,7 @@ log:
   root:
 
 checkpoint:
-  init: '/home/baha/codes/solar_data/InfraredSolarModules/results/noNomanly_weighted_scratch_densenet121_lr=0.1_acc=81.553/model_epoch125.pth'
+  init: '/home/baha/codes/solar_data/InfraredSolarModules/results/weighted_cifar100_densenet121_lr=0.1_acc=82.35353/model_epoch61.pth'
   frequency:
     epoch: 1
 
