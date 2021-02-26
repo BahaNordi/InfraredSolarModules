@@ -36,8 +36,6 @@ def train_pipeline(optimizer, train_loader, model, device, epoch, tb_writer,
     }
 
     for itr, batch in enumerate(train_loader):
-        # if itr == 1:
-        #     break
         image, labels = batch
         image, labels = image.to(device), labels.to(device)
         optimizer.zero_grad()
@@ -72,6 +70,8 @@ def val_pipeline(val_loader, model, device, epoch, tb_writer, number_class, mode
     with torch.no_grad():
         all_pred = torch.tensor([], device=device)
         for itr, batch in enumerate(val_loader):
+            if itr == 1:
+                break
             image, labels = batch
             image, labels = image.to(device), labels.to(device)
             pred = model(image)

@@ -34,13 +34,9 @@ def inference(config):
     test_loader = data_loader.test_loader
     class_to_consider = 4
     idx = torch.tensor(test_loader.dataset.targets) == class_to_consider
-    random_samples = 20
-    random_indices = np.random.choice(np.flatnonzero(idx), random_samples)
-
-    dataset_test_vis = torch.utils.data.dataset.Subset(test_loader_vis.dataset, random_indices)
-    subset_test_vis = torch.utils.data.DataLoader(dataset_test_vis, batch_size=random_samples, shuffle=False)
-    dataset_test = torch.utils.data.dataset.Subset(test_loader.dataset, random_indices)
-    subset_test = torch.utils.data.DataLoader(dataset_test, batch_size=random_samples, shuffle=False)
+    indices = np.flatnonzero(idx)
+    dataset_test = torch.utils.data.dataset.Subset(test_loader.dataset, indices)
+    subset_test = torch.utils.data.DataLoader(dataset_test, batch_size=16, shuffle=False)
 
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda:0" if use_cuda else "cpu")
@@ -54,22 +50,41 @@ def inference(config):
     model.load_state_dict(checkpoint)
     model.eval()
     with torch.no_grad():
-        image, labels = next(iter(subset_test))
-        image_vis, labels_vis = next(iter(subset_test_vis))
-        image, labels = image.to(device), labels.to(device)
-        pred = model(image)
-        pred = F.softmax(pred, -1)
-        max_pred, predicted = torch.max(pred.data, 1)
-        orig_class_prob = pred[:, class_to_consider]
-        display_sample(image_vis, labels_vis, max_pred, predicted, orig_class_prob,
-                       plot_title='Sample images of the "%s" class' % FASHION_LABELS[class_to_consider],
-                       num_rows=random_samples//5, num_cols=5)
+        all_hard_pred = torch.tensor([], device=device)
+        all_max_prob = torch.tensor([], device=device)
+        all_orig_class_prob = torch.tensor([], device=device)
+        for _, batch in enumerate(subset_test):
+            image, labels = batch
+            image, labels = image.to(device), labels.to(device)
+            pred = model(image)
+            pred = F.softmax(pred, -1)
+            max_prob, predicted = torch.max(pred.data, 1)
+            all_orig_class_prob = torch.cat([all_orig_class_prob, pred[:, class_to_consider]], dim=0)
+            all_hard_pred = torch.cat([all_hard_pred, predicted], dim=0)
+            all_max_prob = torch.cat([all_max_prob, max_prob], dim=0)
 
-        print("")
+        sorting_indices = all_orig_class_prob.argsort().numpy()  # to reverse order [::-1]
+        all_hard_pred_sort = all_hard_pred.detach().cpu().numpy()[sorting_indices]
+        all_orig_class_prob_sort = all_orig_class_prob.detach().cpu().numpy()[sorting_indices]
+        max_pred_sort = all_max_prob.detach().cpu().numpy()[sorting_indices]
+
+        # sort indices of image wrd to all_predictions_sort indices
+        sorted_indices = [x for _, x in sorted(zip(all_orig_class_prob.numpy(),
+                                                   dataset_test.indices))]  # to reverse order [::-1]
+        batch_size = 20
+        dataset_test_vis = torch.utils.data.dataset.Subset(test_loader_vis.dataset, sorted_indices)
+        subset_test_vis = torch.utils.data.DataLoader(dataset_test_vis, batch_size=batch_size, shuffle=False)
+        image_vis, labels_vis = next(iter(subset_test_vis))
+
+        display_sample(image_vis, labels_vis, max_pred_sort[:batch_size],
+                       all_hard_pred_sort[:batch_size],
+                       all_orig_class_prob_sort[:batch_size],
+                       plot_title='Sample images of the "%s" class' % FASHION_LABELS[class_to_consider],
+                       num_rows=batch_size//5, num_cols=5)
 
 
 def display_sample(sample_images, sample_labels, sample_prob=None, sample_predictions=None, orig_class_prob=None,
-                   num_rows=5, num_cols=10, plot_title=None, fig_size=None):
+                   num_rows=2, num_cols=5, plot_title=None, fig_size=None):
     """ display a random selection of images & corresponding labels, optionally with predictions
         The display is laid out in a grid of num_rows x num_col cells
         If sample_predictions are provided, then each cell's title displays the prediction

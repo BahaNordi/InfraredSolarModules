@@ -16,7 +16,7 @@ checkpoint:
 data:
   train_dir: '/home/baha/codes/solar_data/InfraredSolarModules/train'
   val_dir: '/home/baha/codes/solar_data/InfraredSolarModules/val'
-  batch_size: 128
+  batch_size: 128  # 128
   num_workers: 4
 
 

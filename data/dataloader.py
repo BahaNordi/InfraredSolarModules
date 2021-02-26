@@ -17,6 +17,7 @@ class SolarDataLoader(object):
         self._train_loader = None
         self._val_loader = None
         self._test_loader = None
+        self.test_set = None
 
     @property
     def train_loader(self):
@@ -86,6 +87,7 @@ class SolarTestDataLoader(object):
         self.std = config['data']['preprocessing']['std']
         self.num_workers = config['data']['num_workers']
         self._test_loader = None
+        self._test_loader_vis = None
         self.augmentation_index = augmentation_index
         self.transforms = {1: transforms.RandomHorizontalFlip(p=1),
                            2: transforms.RandomVerticalFlip(p=1),
@@ -107,8 +109,18 @@ class SolarTestDataLoader(object):
             test_transform = transforms.Compose(self.transform + [transforms.ToTensor(),
                                                 transforms.Normalize([self.mean, self.mean, self.mean],
                                                 [self.std, self.std, self.std])])
-
             test_set = ImageFolder(self.val_dir, test_transform)
             self._test_loader = torch.utils.data.DataLoader(test_set, shuffle=False, batch_size=self.batch_size,
                                                             num_workers=self.num_workers)
         return self._test_loader
+
+    @property
+    def test_loader_visualisation(self):
+        if not self._test_loader_vis:
+            test_transform = transforms.Compose([transforms.ToTensor()])
+            test_set = ImageFolder(self.val_dir, test_transform)
+            self._test_loader_vis = torch.utils.data.DataLoader(test_set, shuffle=False, batch_size=self.batch_size,
+                                                                num_workers=self.num_workers)
+        return self._test_loader_vis
+
+
