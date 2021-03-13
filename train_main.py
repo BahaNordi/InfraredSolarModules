@@ -1,7 +1,6 @@
 import fire
 import os
 import sys
-
 from InfraredSolarModules.data.cifar100_dataloader import CIFARDataLoader
 from InfraredSolarModules.data.dataloader import SolarDataLoader
 from InfraredSolarModules.config.yaml_reader import open_yaml
@@ -101,7 +100,7 @@ def multi_acc(pred, labels, correct, total, multiclass_correct, multiclass_total
     _, predicted = torch.max(pred.data, 1)
     total += labels.size(0)
     correct += (predicted == labels).sum().item()
-    c = (predicted == labels).squeeze()
+    c = (predicted == labels).squeeze().cpu()
     for i in range(batch_size):
         label = labels[i]
         multiclass_correct[label] += c[i].item()

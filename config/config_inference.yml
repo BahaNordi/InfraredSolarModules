@@ -8,6 +8,8 @@ log:
 
 checkpoint:
   init: '/home/baha/codes/solar_data/InfraredSolarModules/results/weighted_cifar100_densenet121_lr=0.1_acc=82.35353/model_epoch61.pth'
+  # '/home/baha/Downloadssolar_checkpoint0.81053Res+vit-Scale.07-1.pth'
+
   frequency:
     epoch: 1
 

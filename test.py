@@ -26,8 +26,7 @@ import numpy as np
 # 0.26336077
 
 
-
-#Create data generators
+# Create data generators
 
 # mean and std
 # meanRGB = [np.mean(x.numpy(), axis=(1, 2)) for x, _ in train_ds]
@@ -55,3 +54,29 @@ import numpy as np
 # print(std_val)
 # mean: 0.6512266
 # std: 0.15099779
+
+# ----------------------------------------
+# import matplotlib.pyplot as plt
+# import torch
+# import torchvision
+# from torchvision import transforms
+#
+# for i in range(20):
+#     train_transform = transforms.Compose(
+#         [
+#             # transforms.RandomApply(torch.nn.ModuleList([transforms.RandomCrop((40, 24), padding=(4, 4, 2, 2))]),
+#             #                        p=1),
+#             transforms.RandomResizedCrop((224, 224), scale=(0.05, 1.0),
+#                                       ),
+#          transforms.ToTensor()])
+#
+#     trainset = torchvision.datasets.ImageFolder('/home/baha/Desktop/train/', transform=train_transform)
+#     trainload = torch.utils.data.DataLoader(trainset, batch_size=1, shuffle=True)
+#
+#     images, labels = iter(trainload).next()
+#     image = images[0]
+#     image = image.permute(1, 2, 0)
+#     plt.imshow(image.numpy())
+#     plt.show()
+
+

@@ -61,7 +61,7 @@ def inference(config):
         pred = F.softmax(pred, -1)
         max_pred, predicted = torch.max(pred.data, 1)
         orig_class_prob = pred[:, class_to_consider]
-        display_sample(image_vis, labels_vis, max_pred, predicted, orig_class_prob,
+        display_sample(image_vis.cpu().numpy(), labels_vis.cpu().numpy(), max_pred, predicted, orig_class_prob,
                        plot_title='Sample images of the "%s" class' % FASHION_LABELS[class_to_consider],
                        num_rows=random_samples//5, num_cols=5)
 

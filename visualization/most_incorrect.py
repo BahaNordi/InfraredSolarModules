@@ -32,7 +32,7 @@ def inference(config):
     data_loader = SolarTestDataLoader(config)
     test_loader_vis = data_loader.test_loader_visualisation
     test_loader = data_loader.test_loader
-    class_to_consider = 4
+    class_to_consider = 10
     idx = torch.tensor(test_loader.dataset.targets) == class_to_consider
     indices = np.flatnonzero(idx)
     dataset_test = torch.utils.data.dataset.Subset(test_loader.dataset, indices)
@@ -63,13 +63,13 @@ def inference(config):
             all_hard_pred = torch.cat([all_hard_pred, predicted], dim=0)
             all_max_prob = torch.cat([all_max_prob, max_prob], dim=0)
 
-        sorting_indices = all_orig_class_prob.argsort().numpy()  # to reverse order [::-1]
+        sorting_indices = all_orig_class_prob.argsort().numpy()[::-1]  # to reverse order [::-1]
         all_hard_pred_sort = all_hard_pred.detach().cpu().numpy()[sorting_indices]
         all_orig_class_prob_sort = all_orig_class_prob.detach().cpu().numpy()[sorting_indices]
         max_pred_sort = all_max_prob.detach().cpu().numpy()[sorting_indices]
 
         # sort indices of image wrd to all_predictions_sort indices
-        sorted_indices = [x for _, x in sorted(zip(all_orig_class_prob.numpy(),
+        sorted_indices = [x for _, x in sorted(zip(all_orig_class_prob.numpy()[::-1],
                                                    dataset_test.indices))]  # to reverse order [::-1]
         batch_size = 20
         dataset_test_vis = torch.utils.data.dataset.Subset(test_loader_vis.dataset, sorted_indices)
