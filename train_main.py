@@ -69,8 +69,8 @@ def val_pipeline(val_loader, model, device, epoch, tb_writer, number_class, mode
     with torch.no_grad():
         all_pred = torch.tensor([], device=device)
         for itr, batch in enumerate(val_loader):
-            if itr == 1:
-                break
+            # if itr == 1:
+            #     break
             image, labels = batch
             image, labels = image.to(device), labels.to(device)
             pred = model(image)
